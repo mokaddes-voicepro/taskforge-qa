@@ -18,6 +18,7 @@ pages/        Page objects: all locators and page actions live here
   LeavePage.ts
   LaborCostPage.ts
   PayrollPage.ts
+  ChatPage.ts
   WorkingNowPage.ts
   WorkspacePage.ts
 fixtures/     Playwright fixtures that inject page objects and credentials
@@ -159,7 +160,7 @@ account.
 | 08 | Labor cost | `tests/08-labor-cost.spec.ts` | `pages/LaborCostPage.ts` (extends `AppShellPage`) |
 | 09 | Payroll | `tests/09-payroll.spec.ts` | `pages/PayrollPage.ts` (extends `AppShellPage`) |
 | 10 | Working now | `tests/10-working-now.spec.ts` | `pages/WorkingNowPage.ts` (extends `AppShellPage`) |
-| 11 | Chat | planned | planned |
+| 11 | Chat | `tests/11-chat.spec.ts` | `pages/ChatPage.ts` (extends `AppShellPage`) |
 | 12 | Announcements | planned | planned |
 | 13 | Notifications | planned | planned |
 | 14 | Projects | planned | planned |
@@ -278,6 +279,17 @@ and clock-out actions kept in sync. The clock-out confirmation is opened to
 check its employee name and copy, then cancelled; no clock-out is confirmed and
 no time entry is changed. The On leave today card and its employee/leave-type
 rows are checked when people are on leave; otherwise that test skips.
+
+### Module 11 - Chat
+Read-only checks: conversation sidebar with workspace, department and project
+channels and their active state, All/Channels/Direct filters, channel search with
+no-match and clear behaviour, switching between conversation types, the empty
+conversation state and composer gating with draft text and clear recovery,
+formatting hide/show, the new-channel dialog with a clean cancel, global and
+conversation-scoped message search dialogs, the member popover and direct-message
+picker without submitting a conversation, and the emoji picker plus mention
+suggestions without sending. No message is sent, no channel is created and no
+direct message is started.
 
 ## Known constraints handled by the helpers
 
