@@ -3,6 +3,7 @@ import { CalendarPage } from '../pages/CalendarPage';
 import { HomePage } from '../pages/HomePage';
 import { LaborCostPage } from '../pages/LaborCostPage';
 import { LeavePage } from '../pages/LeavePage';
+import { PayrollPage } from '../pages/PayrollPage';
 import { SchedulePage } from '../pages/SchedulePage';
 import { TasksPage } from '../pages/TasksPage';
 import { TimeClockPage } from '../pages/TimeClockPage';
@@ -16,6 +17,7 @@ interface PageFixtures {
   schedulePage: SchedulePage;
   leavePage: LeavePage;
   laborCostPage: LaborCostPage;
+  payrollPage: PayrollPage;
   timeClockPage: TimeClockPage;
   timesheetsPage: TimesheetsPage;
 }
@@ -65,6 +67,13 @@ export const test = authTest.extend<PageFixtures>({
   laborCostPage: async ({ page, context, authStoragePath }, use) => {
     await use(
       new LaborCostPage(page, {
+        restoreSession: () => restoreSessionCookies(context, authStoragePath),
+      }),
+    );
+  },
+  payrollPage: async ({ page, context, authStoragePath }, use) => {
+    await use(
+      new PayrollPage(page, {
         restoreSession: () => restoreSessionCookies(context, authStoragePath),
       }),
     );

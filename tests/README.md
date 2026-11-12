@@ -17,6 +17,7 @@ pages/        Page objects: all locators and page actions live here
   TimesheetsPage.ts
   LeavePage.ts
   LaborCostPage.ts
+  PayrollPage.ts
   WorkspacePage.ts
 fixtures/     Playwright fixtures that inject page objects and credentials
   auth.fixture.ts
@@ -155,7 +156,7 @@ account.
 | 06 | Timesheets | `tests/06-timesheets.spec.ts` | `pages/TimesheetsPage.ts` (extends `AppShellPage`) |
 | 07 | Leave | `tests/07-leave.spec.ts` | `pages/LeavePage.ts` (extends `AppShellPage`) |
 | 08 | Labor cost | `tests/08-labor-cost.spec.ts` | `pages/LaborCostPage.ts` (extends `AppShellPage`) |
-| 09 | Payroll | planned | planned |
+| 09 | Payroll | `tests/09-payroll.spec.ts` | `pages/PayrollPage.ts` (extends `AppShellPage`) |
 | 10 | Working now | planned | planned |
 | 11 | Chat | planned | planned |
 | 12 | Announcements | planned | planned |
@@ -253,6 +254,20 @@ against the export query. The Approved-only switch is toggled and checked in the
 export query, and empty or populated results are validated without broken
 values. Exporting is verified through the CSV link's query only; no download is
 started and no workspace data is changed.
+
+### Module 9 — Payroll
+
+Read-only checks: the report shell on the last completed weekly period, the
+disabled Last completed period reset, Previous/Next week navigation with the
+period heading and both export dates in sync, the export detail/summary links,
+the closing estimated-wages note, and the no-approved-timesheets empty state.
+Same-year and cross-year period labels are parsed and checked across a year
+boundary. When the period has unapproved timesheets, the warning text and its
+Team timesheets review link are validated. If approved timesheets exist, the
+employee table columns, footer totals and expandable adjustment details are
+checked; that test skips while the workspace has no approved payroll rows.
+Exporting is verified through the CSV links only; no download is started and no
+payroll data is changed.
 
 ## Known constraints handled by the helpers
 
