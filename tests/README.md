@@ -18,6 +18,7 @@ pages/        Page objects: all locators and page actions live here
   LeavePage.ts
   LaborCostPage.ts
   PayrollPage.ts
+  WorkingNowPage.ts
   WorkspacePage.ts
 fixtures/     Playwright fixtures that inject page objects and credentials
   auth.fixture.ts
@@ -157,7 +158,7 @@ account.
 | 07 | Leave | `tests/07-leave.spec.ts` | `pages/LeavePage.ts` (extends `AppShellPage`) |
 | 08 | Labor cost | `tests/08-labor-cost.spec.ts` | `pages/LaborCostPage.ts` (extends `AppShellPage`) |
 | 09 | Payroll | `tests/09-payroll.spec.ts` | `pages/PayrollPage.ts` (extends `AppShellPage`) |
-| 10 | Working now | planned | planned |
+| 10 | Working now | `tests/10-working-now.spec.ts` | `pages/WorkingNowPage.ts` (extends `AppShellPage`) |
 | 11 | Chat | planned | planned |
 | 12 | Announcements | planned | planned |
 | 13 | Notifications | planned | planned |
@@ -268,6 +269,15 @@ employee table columns, footer totals and expandable adjustment details are
 checked; that test skips while the workspace has no approved payroll rows.
 Exporting is verified through the CSV links only; no download is started and no
 payroll data is changed.
+
+### Module 10 — Working now
+
+Read-only checks: board loading, the empty state, location groups, and the On
+the clock/On break/Not in yet sections with their counts, row copy, flag badges
+and clock-out actions kept in sync. The clock-out confirmation is opened to
+check its employee name and copy, then cancelled; no clock-out is confirmed and
+no time entry is changed. The On leave today card and its employee/leave-type
+rows are checked when people are on leave; otherwise that test skips.
 
 ## Known constraints handled by the helpers
 

@@ -8,6 +8,7 @@ import { SchedulePage } from '../pages/SchedulePage';
 import { TasksPage } from '../pages/TasksPage';
 import { TimeClockPage } from '../pages/TimeClockPage';
 import { TimesheetsPage } from '../pages/TimesheetsPage';
+import { WorkingNowPage } from '../pages/WorkingNowPage';
 import { restoreSessionCookies } from '../utils/auth';
 
 interface PageFixtures {
@@ -20,6 +21,7 @@ interface PageFixtures {
   payrollPage: PayrollPage;
   timeClockPage: TimeClockPage;
   timesheetsPage: TimesheetsPage;
+  workingNowPage: WorkingNowPage;
 }
 
 /**
@@ -88,6 +90,13 @@ export const test = authTest.extend<PageFixtures>({
   timesheetsPage: async ({ page, context, authStoragePath }, use) => {
     await use(
       new TimesheetsPage(page, {
+        restoreSession: () => restoreSessionCookies(context, authStoragePath),
+      }),
+    );
+  },
+  workingNowPage: async ({ page, context, authStoragePath }, use) => {
+    await use(
+      new WorkingNowPage(page, {
         restoreSession: () => restoreSessionCookies(context, authStoragePath),
       }),
     );
