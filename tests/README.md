@@ -6,6 +6,7 @@ TypeScript (Page Object Model) + Playwright end-to-end tests for `https://mytask
 
 ```text
 pages/        Page objects: all locators and page actions live here
+  AnnouncementsPage.ts
   BasePage.ts
   AppShellPage.ts
   HomePage.ts
@@ -161,7 +162,7 @@ account.
 | 09 | Payroll | `tests/09-payroll.spec.ts` | `pages/PayrollPage.ts` (extends `AppShellPage`) |
 | 10 | Working now | `tests/10-working-now.spec.ts` | `pages/WorkingNowPage.ts` (extends `AppShellPage`) |
 | 11 | Chat | `tests/11-chat.spec.ts` | `pages/ChatPage.ts` (extends `AppShellPage`) |
-| 12 | Announcements | planned | planned |
+| 12 | Announcements | `tests/12-announcements.spec.ts` | `pages/AnnouncementsPage.ts` (extends `AppShellPage`) |
 | 13 | Notifications | planned | planned |
 | 14 | Projects | planned | planned |
 | 15 | Departments | planned | planned |
@@ -290,6 +291,15 @@ conversation-scoped message search dialogs, the member popover and direct-messag
 picker without submitting a conversation, and the emoji picker plus mention
 suggestions without sending. No message is sent, no channel is created and no
 direct message is started.
+
+### Module 12 - Announcements
+Read-only checks: the announcement list with its All/Unread tabs and empty
+state, and the new-announcement dialog. The dialog is opened and checked for
+its title, message, audience switch, pin control, attachment input, validation
+message and disabled Post button. Title and message drafts enable Post, the
+draft is cleared back to the disabled state, the audience switch is toggled back
+to its original value, and the pin date picker is opened and closed. No
+announcement is posted, pinned or deleted.
 
 ## Known constraints handled by the helpers
 

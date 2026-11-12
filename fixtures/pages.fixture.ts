@@ -1,4 +1,5 @@
 import { test as authTest } from './auth.fixture';
+import { AnnouncementsPage } from '../pages/AnnouncementsPage';
 import { CalendarPage } from '../pages/CalendarPage';
 import { ChatPage } from '../pages/ChatPage';
 import { HomePage } from '../pages/HomePage';
@@ -24,6 +25,7 @@ interface PageFixtures {
   timesheetsPage: TimesheetsPage;
   workingNowPage: WorkingNowPage;
   chatPage: ChatPage;
+  announcementsPage: AnnouncementsPage;
 }
 
 /**
@@ -106,6 +108,13 @@ export const test = authTest.extend<PageFixtures>({
   chatPage: async ({ page, context, authStoragePath }, use) => {
     await use(
       new ChatPage(page, {
+        restoreSession: () => restoreSessionCookies(context, authStoragePath),
+      }),
+    );
+  },
+  announcementsPage: async ({ page, context, authStoragePath }, use) => {
+    await use(
+      new AnnouncementsPage(page, {
         restoreSession: () => restoreSessionCookies(context, authStoragePath),
       }),
     );
