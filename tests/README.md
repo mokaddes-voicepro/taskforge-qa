@@ -23,6 +23,7 @@ fixtures/     Playwright fixtures that inject page objects and credentials
   pages.fixture.ts
 utils/        Shared auth, env and navigation helpers
 tests/        Specs and the auth setup project
+.github/      GitHub Actions CI workflow
 ```
 
 Follow the Page Object Model: specs call page-object methods and must not use
@@ -92,6 +93,32 @@ HTML report:
 ```sh
 npm run report
 ```
+
+## Continuous integration
+
+`.github/workflows/playwright.yml` runs on pushes and pull requests to `main`
+and can also be started manually. It performs two jobs:
+
+1. **Type check** — installs dependencies and runs `npm run typecheck`.
+2. **E2E (Chrome)** — installs Google Chrome, runs the authentication and module
+   suites, and uploads `playwright-report/` and `test-results/` as a build
+   artifact (kept for 14 days). It is skipped for pull requests from forks
+   because those runs do not receive repository secrets.
+
+Configure these repository secrets under **Settings → Secrets and variables →
+Actions** before running the E2E job:
+
+| Secret | Purpose |
+|---|---|
+| `OWNER_EMAIL` | Authorized QA account email (maps to `owner_email`) |
+| `OWNER_PASSWORD` | Authorized QA account password (maps to `owner_password`) |
+| `BASE_URL` | Optional app URL; defaults to `https://mytaskforge.net/` |
+| `WORKSPACE_PATH` | Optional workspace path; defaults to `/abdul-s-workspace` |
+
+The workflow never writes `.env`, and credentials are passed only through
+environment variables. Runs are serialized by the repository's concurrency
+group because the suite shares one owner account and the app rate-limits
+sign-ins.
 
 ## Auth coverage (`tests/00-auth.spec.ts`)
 

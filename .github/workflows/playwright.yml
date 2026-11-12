@@ -1,0 +1,101 @@
+name: Playwright QA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playwright-qa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    name: Type check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          # The postinstall hook downloads all browsers. The E2E job installs
+          # only the browser it needs, so skip the download here.
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - name: Type check
+        run: npm run typecheck
+
+  e2e:
+    name: E2E (Chrome)
+    needs: typecheck
+    # Fork pull requests do not receive repository secrets, so only run the
+    # credential-backed suite for same-repository PRs, pushes and manual runs.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      BASE_URL: ${{ secrets.BASE_URL || 'https://mytaskforge.net/' }}
+      WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH || '/abdul-s-workspace' }}
+      owner_email: ${{ secrets.OWNER_EMAIL }}
+      owner_password: ${{ secrets.OWNER_PASSWORD }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - name: Install Google Chrome for Playwright
+        run: npx playwright install --with-deps chrome
+
+      - name: Verify test credentials are configured
+        shell: bash
+        run: |
+          if [[ -z "${owner_email}" || -z "${owner_password}" ]]; then
+            echo "::error::Set the OWNER_EMAIL and OWNER_PASSWORD repository secrets before running the E2E job."
+            exit 1
+          fi
+
+      - name: Run authentication tests
+        run: npm run test:auth:chrome
+
+      - name: Run module tests
+        run: npm run test:modules:chrome
+
+      - name: Upload Playwright report and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
