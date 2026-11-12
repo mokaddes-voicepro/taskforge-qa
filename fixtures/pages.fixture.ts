@@ -7,6 +7,7 @@ import { HomePage } from '../pages/HomePage';
 import { LaborCostPage } from '../pages/LaborCostPage';
 import { LeavePage } from '../pages/LeavePage';
 import { PayrollPage } from '../pages/PayrollPage';
+import { ProjectsPage } from '../pages/ProjectsPage';
 import { SchedulePage } from '../pages/SchedulePage';
 import { TasksPage } from '../pages/TasksPage';
 import { TimeClockPage } from '../pages/TimeClockPage';
@@ -28,6 +29,7 @@ interface PageFixtures {
   chatPage: ChatPage;
   announcementsPage: AnnouncementsPage;
   notificationsPage: NotificationsPage;
+  projectsPage: ProjectsPage;
 }
 
 /**
@@ -124,6 +126,13 @@ export const test = authTest.extend<PageFixtures>({
   notificationsPage: async ({ page, context, authStoragePath }, use) => {
     await use(
       new NotificationsPage(page, {
+        restoreSession: () => restoreSessionCookies(context, authStoragePath),
+      }),
+    );
+  },
+  projectsPage: async ({ page, context, authStoragePath }, use) => {
+    await use(
+      new ProjectsPage(page, {
         restoreSession: () => restoreSessionCookies(context, authStoragePath),
       }),
     );

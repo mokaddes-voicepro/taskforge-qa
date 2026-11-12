@@ -20,6 +20,7 @@ pages/        Page objects: all locators and page actions live here
   LaborCostPage.ts
   NotificationsPage.ts
   PayrollPage.ts
+  ProjectsPage.ts
   ChatPage.ts
   WorkingNowPage.ts
   WorkspacePage.ts
@@ -165,7 +166,7 @@ account.
 | 11 | Chat | `tests/11-chat.spec.ts` | `pages/ChatPage.ts` (extends `AppShellPage`) |
 | 12 | Announcements | `tests/12-announcements.spec.ts` | `pages/AnnouncementsPage.ts` (extends `AppShellPage`) |
 | 13 | Notifications | `tests/13-notifications.spec.ts` | `pages/NotificationsPage.ts` (extends `AppShellPage`) |
-| 14 | Projects | planned | planned |
+| 14 | Projects | `tests/14-projects.spec.ts` | `pages/ProjectsPage.ts` (extends `AppShellPage`) |
 | 15 | Departments | planned | planned |
 | 16 | Employees | planned | planned |
 | 17 | Settings | planned | planned |
@@ -306,6 +307,12 @@ announcement is posted, pinned or deleted.
 Read-only checks: the notification list with its All/Unread tabs and empty
 state, plus the Mark all read control. Mark all read is asserted disabled
 while there are no unread notifications; it is never clicked.
+
+### Module 14 - Projects
+Read-only checks: the active projects list with its project row, status tabs
+(Active/Overdue/Archived), department and owner filters, the only-my-departments
+switch, Table/Cards layout toggle, and the new-project dialog. The dialog is
+opened and cancelled only; no project is created or starred.
 
 ## Known constraints handled by the helpers
 
