@@ -18,6 +18,7 @@ pages/        Page objects: all locators and page actions live here
   TimesheetsPage.ts
   LeavePage.ts
   LaborCostPage.ts
+  NotificationsPage.ts
   PayrollPage.ts
   ChatPage.ts
   WorkingNowPage.ts
@@ -163,7 +164,7 @@ account.
 | 10 | Working now | `tests/10-working-now.spec.ts` | `pages/WorkingNowPage.ts` (extends `AppShellPage`) |
 | 11 | Chat | `tests/11-chat.spec.ts` | `pages/ChatPage.ts` (extends `AppShellPage`) |
 | 12 | Announcements | `tests/12-announcements.spec.ts` | `pages/AnnouncementsPage.ts` (extends `AppShellPage`) |
-| 13 | Notifications | planned | planned |
+| 13 | Notifications | `tests/13-notifications.spec.ts` | `pages/NotificationsPage.ts` (extends `AppShellPage`) |
 | 14 | Projects | planned | planned |
 | 15 | Departments | planned | planned |
 | 16 | Employees | planned | planned |
@@ -300,6 +301,11 @@ message and disabled Post button. Title and message drafts enable Post, the
 draft is cleared back to the disabled state, the audience switch is toggled back
 to its original value, and the pin date picker is opened and closed. No
 announcement is posted, pinned or deleted.
+
+### Module 13 - Notifications
+Read-only checks: the notification list with its All/Unread tabs and empty
+state, plus the Mark all read control. Mark all read is asserted disabled
+while there are no unread notifications; it is never clicked.
 
 ## Known constraints handled by the helpers
 
