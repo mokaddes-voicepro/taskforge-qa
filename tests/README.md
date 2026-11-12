@@ -12,6 +12,11 @@ pages/        Page objects: all locators and page actions live here
   TasksPage.ts
   CalendarPage.ts
   LoginPage.ts
+  SchedulePage.ts
+  TimeClockPage.ts
+  TimesheetsPage.ts
+  LeavePage.ts
+  LaborCostPage.ts
   WorkspacePage.ts
 fixtures/     Playwright fixtures that inject page objects and credentials
   auth.fixture.ts
@@ -118,11 +123,11 @@ account.
 | 01 | Home | `tests/01-home.spec.ts` | `pages/HomePage.ts` (extends `AppShellPage`) |
 | 02 | Tasks | `tests/02-tasks.spec.ts` | `pages/TasksPage.ts` (extends `AppShellPage`) |
 | 03 | Calendar | `tests/03-calendar.spec.ts` | `pages/CalendarPage.ts` (extends `AppShellPage`) |
-| 04 | Schedule | planned | planned |
-| 05 | Time clock | planned | planned |
-| 06 | Timesheets | planned | planned |
-| 07 | Leave | planned | planned |
-| 08 | Labor cost | planned | planned |
+| 04 | Schedule | `tests/04-schedule.spec.ts` | `pages/SchedulePage.ts` (extends `AppShellPage`) |
+| 05 | Time clock | `tests/05-time-clock.spec.ts` | `pages/TimeClockPage.ts` (extends `AppShellPage`) |
+| 06 | Timesheets | `tests/06-timesheets.spec.ts` | `pages/TimesheetsPage.ts` (extends `AppShellPage`) |
+| 07 | Leave | `tests/07-leave.spec.ts` | `pages/LeavePage.ts` (extends `AppShellPage`) |
+| 08 | Labor cost | `tests/08-labor-cost.spec.ts` | `pages/LaborCostPage.ts` (extends `AppShellPage`) |
 | 09 | Payroll | planned | planned |
 | 10 | Working now | planned | planned |
 | 11 | Chat | planned | planned |
@@ -164,6 +169,63 @@ recovery, filter option/search-box inventories, and the empty-month copy over an
 intact grid. Event drill-down, timezone-boundary placement and event show/hide
 verification are deferred until scheduled data exists.
 
+### Module 4 — Schedule
+
+Read-only checks: weekly grid load, seven day columns tied to the week label,
+employee rows with one add-shift action per day, Previous/Next/This week
+navigation with stable employee rows, My shifts toggle with the personal empty
+state, department/office filter option sets, department filter apply/clear,
+publish and discard gating with no drafts, empty-schedule zero-hour state, and
+the Add shift draft dialog defaults with a clean cancel. Shift creation,
+Copy last week, Discard drafts, publishing and overlap validation are deferred
+because they mutate the shared workspace.
+
+### Module 5 — Time clock
+
+Read-only checks: live clock and date formatting, current clock state and timer,
+the off-clock action and location notice, project picker options with selection
+and reset back to No project, today's worked time/entry count with the zero state,
+and the weekly total plus seven-day chart. Clock in/out, breaks and job switching
+are deferred because they mutate the owner's time entry and shared workspace.
+
+### Module 6 — Timesheets
+
+Read-only checks: current pay period with summary cards and seven daily rows,
+Previous/Next/This period navigation, My timesheet/Team tabs with URL sync, team
+rows with status/hours/overtime/flags/pay, Approve selected row-selection gating,
+and the Add entry dialog defaults, project/office/break options, reason
+requirement, clock-order validation and clean cancel. Submitting, approving and
+saving manual entries are deferred because they mutate the shared workspace.
+The empty-timesheet Submit state is annotated as QA-006 and is never activated.
+
+### Module 7 — Leave
+
+Read-only checks: balance cards for Vacation, Sick, Personal and unpaid leave,
+My leave/Requests/Calendar tabs with URL sync, the personal empty-request state,
+the team request queue status filters (Pending/Approved/Rejected/Cancelled/All),
+and month navigation on the leave calendar with weekday headers, a 28–42-cell
+week grid (35 or 42 cells depending on the month), out-of-month dimming, the
+today highlight and the Approved/Pending legend. The Request leave dialog is
+covered for its owner/type options, default dates, length radios and preview,
+optional reason, end-before-start validation and a clean cancel that leaves
+balances and requests unchanged. Submitting, approving, rejecting and cancelling
+leave are deferred because they mutate the shared workspace. Choosing dates only
+calls the dialog's non-mutating preview endpoint. Correcting an end-before-start
+range restores the preview and enables Send request but leaves the Length control
+hidden; that state is annotated as QA-013 and is never submitted.
+
+### Module 8 — Labor cost
+
+Read-only checks: the report shell with the current week and export link, all
+five preset ranges with the range summary and export dates in sync, custom
+from/to date pickers with the pending prompt and export gating, and the
+Employee/Project/Department/Office groupings with their matching columns and
+row/footer totals. Department, Office and Project filter option sets are
+inventoried and the Department/Project filters are applied, cleared and checked
+against the export query. The Approved-only switch is toggled and checked in the
+export query, and empty or populated results are validated without broken
+values. Exporting is verified through the CSV link's query only; no download is
+started and no workspace data is changed.
 
 ## Known constraints handled by the helpers
 
