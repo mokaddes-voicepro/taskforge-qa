@@ -1,6 +1,14 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import {
+  expect,
+  type Locator,
+  type Page,
+  type Response,
+} from '@playwright/test';
 import { env } from '../utils/env';
 import { BasePage } from './BasePage';
+
+const GET_SESSION_ENDPOINT = '/api/v1/auth/get-session';
+const LOGIN_RATE_LIMIT_WAIT_MS = 10_000;
 
 export interface NavItem {
   label: string;
@@ -103,21 +111,47 @@ export class AppShellPage extends BasePage {
    * Navigates to an authenticated route. A valid stored session is
    * occasionally dropped on a single navigation (observed across browsers and
    * related to the transient auth behaviour in QA-003), so restore the saved
-   * cookies and retry with backoff. A genuinely invalid session still fails
-   * every attempt.
+   * cookies and retry with backoff. When the app rate-limits its get-session
+   * endpoint it redirects to /login with a 429, so honour X-Retry-After
+   * instead of retrying inside the same limiter window. A genuinely invalid
+   * session still fails every attempt.
    */
   protected async gotoAuthenticated(
     path: string,
     attempts = 4,
   ): Promise<void> {
-    const backoffMs = [0, 1_000, 2_000, 4_000];
+    const backoffMs = [2_000, 10_000, 15_000];
     let lastError: unknown;
 
     for (let current = 1; current <= attempts; current += 1) {
+      let rateLimitWaitMs = 0;
+      const recordRateLimit = (response: Response) => {
+        if (
+          response.status() === 429 &&
+          response.url().includes(GET_SESSION_ENDPOINT)
+        ) {
+          const retryAfterSeconds = Number(
+            response.headers()['x-retry-after'] ?? 0,
+          );
+
+          if (Number.isFinite(retryAfterSeconds)) {
+            rateLimitWaitMs = Math.max(
+              rateLimitWaitMs,
+              retryAfterSeconds * 1_000,
+            );
+          }
+        }
+      };
+
+      this.page.on('response', recordRateLimit);
+
       try {
         await this.navigate(path);
 
         if (this.currentPath() === '/login') {
+          // The client-side get-session response can land just after the
+          // redirect, so give it a moment to report a 429 wait.
+          await this.page.waitForTimeout(1_000);
           throw new Error(`Redirected to /login while opening ${path}`);
         }
 
@@ -128,8 +162,43 @@ export class AppShellPage extends BasePage {
 
         if (current < attempts) {
           await this.restoreSession?.();
-          await this.page.waitForTimeout(backoffMs[current] ?? 4_000);
+          await this.page.waitForTimeout(
+            Math.max(backoffMs[current - 1] ?? 10_000, rateLimitWaitMs + 1_000),
+          );
         }
+      } finally {
+        this.page.off('response', recordRateLimit);
+      }
+    }
+
+    throw lastError;
+  }
+
+  /**
+   * Runs an in-page interaction and recovers once if the app redirects to
+   * /login because its get-session endpoint was rate-limited. Reopen the
+   * module after the limiter window, then retry the interaction.
+   */
+  protected async retryOnLoginRedirect<T>(
+    recoveryPath: string,
+    action: () => Promise<T>,
+    attempts = 2,
+  ): Promise<T> {
+    let lastError: unknown;
+
+    for (let current = 1; current <= attempts; current += 1) {
+      try {
+        return await action();
+      } catch (cause) {
+        lastError = cause;
+
+        if (current >= attempts || this.currentPath() !== '/login') {
+          throw cause;
+        }
+
+        await this.restoreSession?.();
+        await this.page.waitForTimeout(LOGIN_RATE_LIMIT_WAIT_MS);
+        await this.gotoAuthenticated(recoveryPath);
       }
     }
 

@@ -191,16 +191,18 @@ export class TasksPage extends AppShellPage {
   }
 
   async selectTab(key: TaskTabKey): Promise<void> {
-    const tab = this.tab(key);
+    await this.retryOnLoginRedirect(this.workspaceHref('/tasks'), async () => {
+      const tab = this.tab(key);
 
-    await tab.click();
-    await expect(tab).toHaveAttribute('aria-selected', 'true');
-    await expect
-      .poll(() => new URL(this.page.url()).search, {
-        message: `Expected tab "${TASK_TABS[key].label}" to sync its URL`,
-      })
-      .toBe(TASK_TABS[key].query);
-    await this.waitForSkeletonsToClear();
+      await tab.click();
+      await expect(tab).toHaveAttribute('aria-selected', 'true');
+      await expect
+        .poll(() => new URL(this.page.url()).search, {
+          message: `Expected tab "${TASK_TABS[key].label}" to sync its URL`,
+        })
+        .toBe(TASK_TABS[key].query);
+      await this.waitForSkeletonsToClear();
+    });
   }
 
   async expectActiveTab(key: TaskTabKey): Promise<void> {

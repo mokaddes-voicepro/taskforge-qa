@@ -373,14 +373,19 @@ export class LeavePage extends AppShellPage {
   }
 
   async selectTab(key: LeaveTabKey): Promise<void> {
-    await this.tab(key).click();
-    await this.expectTab(key);
-    await expect
-      .poll(() => new URL(this.page.url()).search, {
-        message: `Expected the ${LEAVE_TABS[key].label} tab to sync the URL`,
-      })
-      .toBe(LEAVE_TABS[key].query);
-    await this.waitForTab(key);
+    await this.retryOnLoginRedirect(
+      this.workspaceHref('/leave'),
+      async () => {
+        await this.tab(key).click();
+        await this.expectTab(key);
+        await expect
+          .poll(() => new URL(this.page.url()).search, {
+            message: `Expected the ${LEAVE_TABS[key].label} tab to sync the URL`,
+          })
+          .toBe(LEAVE_TABS[key].query);
+        await this.waitForTab(key);
+      },
+    );
   }
 
   balanceCards(): Locator {

@@ -319,14 +319,19 @@ export class TimesheetsPage extends AppShellPage {
   }
 
   async selectTab(key: TimesheetTabKey): Promise<void> {
-    await this.tab(key).click();
-    await this.expectTab(key);
-    await expect
-      .poll(() => new URL(this.page.url()).search, {
-        message: `Expected the ${TIMESHEET_TABS[key].label} tab to sync the URL`,
-      })
-      .toBe(TIMESHEET_TABS[key].query);
-    await this.waitForActivePanel();
+    await this.retryOnLoginRedirect(
+      this.workspaceHref('/timesheets'),
+      async () => {
+        await this.tab(key).click();
+        await this.expectTab(key);
+        await expect
+          .poll(() => new URL(this.page.url()).search, {
+            message: `Expected the ${TIMESHEET_TABS[key].label} tab to sync the URL`,
+          })
+          .toBe(TIMESHEET_TABS[key].query);
+        await this.waitForActivePanel();
+      },
+    );
   }
 
   async expectTab(key: TimesheetTabKey): Promise<void> {
@@ -602,6 +607,27 @@ export class TimesheetsPage extends AppShellPage {
   async removeBreak(): Promise<void> {
     await this.dialogRemoveBreakButton.click();
     await expect(this.dialogBreakTypeButton).toBeHidden();
+    await expect(this.dialogAddEntryButton).toBeDisabled();
+  }
+
+  /**
+   * Moves the manual entry to the same time yesterday. The dialog defaults to
+   * 09:00-17:00 today, which is still in the future before 17:00 and keeps
+   * "Add entry" disabled with "Times can't be in the future". A past date
+   * makes the reason and clock-order checks deterministic at any run time.
+   */
+  async usePastEntryDate(): Promise<void> {
+    const [year, month, day] = (await this.dialogClockIn.inputValue())
+      .slice(0, 10)
+      .split('-')
+      .map(Number);
+    const pastDate = new Date(Date.UTC(year, month - 1, day - 1))
+      .toISOString()
+      .slice(0, 10);
+
+    await this.dialogClockIn.fill(`${pastDate}T09:00`);
+    await this.dialogClockOut.fill(`${pastDate}T17:00`);
+    await expect(this.dialogClockOut).toHaveValue(`${pastDate}T17:00`);
     await expect(this.dialogAddEntryButton).toBeDisabled();
   }
 

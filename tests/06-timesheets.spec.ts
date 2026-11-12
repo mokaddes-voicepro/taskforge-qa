@@ -149,6 +149,7 @@ test.describe('Timesheets (Module 6)', () => {
 
     await timesheetsPage.openAddEntryDialog();
     await timesheetsPage.expectAddEntryDialog();
+    await timesheetsPage.usePastEntryDate();
     await timesheetsPage.fillReason();
     await timesheetsPage.clearReason();
     await timesheetsPage.fillReason();
