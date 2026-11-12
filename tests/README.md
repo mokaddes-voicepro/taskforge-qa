@@ -23,6 +23,7 @@ pages/        Page objects: all locators and page actions live here
   ProjectsPage.ts
   ChatPage.ts
   DepartmentsPage.ts
+  EmployeesPage.ts
   WorkingNowPage.ts
   WorkspacePage.ts
 fixtures/     Playwright fixtures that inject page objects and credentials
@@ -169,7 +170,7 @@ account.
 | 13 | Notifications | `tests/13-notifications.spec.ts` | `pages/NotificationsPage.ts` (extends `AppShellPage`) |
 | 14 | Projects | `tests/14-projects.spec.ts` | `pages/ProjectsPage.ts` (extends `AppShellPage`) |
 | 15 | Departments | `tests/15-departments.spec.ts` | `pages/DepartmentsPage.ts` (extends `AppShellPage`) |
-| 16 | Employees | planned | planned |
+| 16 | Employees | `tests/16-employees.spec.ts` | `pages/EmployeesPage.ts` (extends `AppShellPage`) |
 | 17 | Settings | planned | planned |
 
 ### Module 1 — Home
@@ -318,6 +319,11 @@ opened and cancelled only; no project is created or starred.
 ### Module 15 - Departments
 Read-only checks: the department list and the new-department dialog. The dialog
 is opened and cancelled only; no department is created.
+
+### Module 16 - Employees
+Read-only checks: the employee list with its filters and count, search with a
+no-match and clear recovery, and the add-members dialog. No employee is added,
+removed or reassigned.
 
 ## Known constraints handled by the helpers
 
