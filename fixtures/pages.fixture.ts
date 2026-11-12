@@ -1,6 +1,7 @@
 import { test as authTest } from './auth.fixture';
 import { AnnouncementsPage } from '../pages/AnnouncementsPage';
 import { CalendarPage } from '../pages/CalendarPage';
+import { DepartmentsPage } from '../pages/DepartmentsPage';
 import { NotificationsPage } from '../pages/NotificationsPage';
 import { ChatPage } from '../pages/ChatPage';
 import { HomePage } from '../pages/HomePage';
@@ -27,6 +28,7 @@ interface PageFixtures {
   timesheetsPage: TimesheetsPage;
   workingNowPage: WorkingNowPage;
   chatPage: ChatPage;
+  departmentsPage: DepartmentsPage;
   announcementsPage: AnnouncementsPage;
   notificationsPage: NotificationsPage;
   projectsPage: ProjectsPage;
@@ -133,6 +135,13 @@ export const test = authTest.extend<PageFixtures>({
   projectsPage: async ({ page, context, authStoragePath }, use) => {
     await use(
       new ProjectsPage(page, {
+        restoreSession: () => restoreSessionCookies(context, authStoragePath),
+      }),
+    );
+  },
+  departmentsPage: async ({ page, context, authStoragePath }, use) => {
+    await use(
+      new DepartmentsPage(page, {
         restoreSession: () => restoreSessionCookies(context, authStoragePath),
       }),
     );
