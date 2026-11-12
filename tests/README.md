@@ -14,6 +14,7 @@ pages/        Page objects: all locators and page actions live here
   CalendarPage.ts
   LoginPage.ts
   SchedulePage.ts
+  SettingsPage.ts
   TimeClockPage.ts
   TimesheetsPage.ts
   LeavePage.ts
@@ -171,7 +172,7 @@ account.
 | 14 | Projects | `tests/14-projects.spec.ts` | `pages/ProjectsPage.ts` (extends `AppShellPage`) |
 | 15 | Departments | `tests/15-departments.spec.ts` | `pages/DepartmentsPage.ts` (extends `AppShellPage`) |
 | 16 | Employees | `tests/16-employees.spec.ts` | `pages/EmployeesPage.ts` (extends `AppShellPage`) |
-| 17 | Settings | planned | planned |
+| 17 | Settings | `tests/17-settings.spec.ts` | `pages/SettingsPage.ts` (extends `AppShellPage`) |
 
 ### Module 1 — Home
 
@@ -324,6 +325,12 @@ is opened and cancelled only; no department is created.
 Read-only checks: the employee list with its filters and count, search with a
 no-match and clear recovery, and the add-members dialog. No employee is added,
 removed or reassigned.
+
+### Module 17 - Settings
+Read-only checks: the settings shell with its section navigation, the general
+settings form (name, URL name, business type, timezone), disabled Save changes
+for unchanged values, and the danger-zone delete button. No setting is saved and
+the workspace is not deleted.
 
 ## Known constraints handled by the helpers
 

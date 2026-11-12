@@ -11,6 +11,7 @@ import { LeavePage } from '../pages/LeavePage';
 import { PayrollPage } from '../pages/PayrollPage';
 import { ProjectsPage } from '../pages/ProjectsPage';
 import { SchedulePage } from '../pages/SchedulePage';
+import { SettingsPage } from '../pages/SettingsPage';
 import { TasksPage } from '../pages/TasksPage';
 import { TimeClockPage } from '../pages/TimeClockPage';
 import { TimesheetsPage } from '../pages/TimesheetsPage';
@@ -29,6 +30,7 @@ interface PageFixtures {
   timesheetsPage: TimesheetsPage;
   workingNowPage: WorkingNowPage;
   chatPage: ChatPage;
+  settingsPage: SettingsPage;
   employeesPage: EmployeesPage;
   departmentsPage: DepartmentsPage;
   announcementsPage: AnnouncementsPage;
@@ -151,6 +153,13 @@ export const test = authTest.extend<PageFixtures>({
   employeesPage: async ({ page, context, authStoragePath }, use) => {
     await use(
       new EmployeesPage(page, {
+        restoreSession: () => restoreSessionCookies(context, authStoragePath),
+      }),
+    );
+  },
+  settingsPage: async ({ page, context, authStoragePath }, use) => {
+    await use(
+      new SettingsPage(page, {
         restoreSession: () => restoreSessionCookies(context, authStoragePath),
       }),
     );
