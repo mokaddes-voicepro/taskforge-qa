@@ -39,4 +39,25 @@ test.describe('Employees (Module 16)', () => {
     await employeesPage.expectAddEmployeesDialog();
     await employeesPage.cancelAddEmployeesDialog();
   });
+
+  test('E-06: employee deep page exposes the Profile/Schedule/Time/Leave/Pay tabs', async ({
+    employeesPage,
+  }) => {
+    await employeesPage.goto();
+    await employeesPage.expectLoaded();
+
+    await employeesPage.openEmployeeProfile('Abdul Mokaddes Arman');
+    await employeesPage.expectProfileLoaded();
+
+    // The Profile tab is the default landing tab of the deep page.
+    await employeesPage.expectProfileTab('Profile', true);
+
+    for (const tabName of ['Schedule', 'Time', 'Leave', 'Pay']) {
+      await employeesPage.selectProfileTab(tabName);
+      await employeesPage.expectProfileTab(tabName, true);
+    }
+
+    await employeesPage.selectProfileTab('Profile');
+    await employeesPage.expectProfileTab('Profile', true);
+  });
 });

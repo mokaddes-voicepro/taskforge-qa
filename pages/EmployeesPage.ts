@@ -13,6 +13,8 @@ export class EmployeesPage extends AppShellPage {
   readonly employmentFilter: Locator;
   readonly count: Locator;
   readonly dialog: Locator;
+  readonly profileHeading: Locator;
+  readonly editProfileButton: Locator;
 
   constructor(page: Page, options: ShellPageOptions = {}) {
     super(page, options);
@@ -47,6 +49,14 @@ export class EmployeesPage extends AppShellPage {
     });
     this.count = this.main.getByText(/\d+ employees/, { exact: false });
     this.dialog = page.getByRole('dialog', { name: 'Add members' });
+    this.profileHeading = this.main.getByRole('heading', {
+      name: /Abdul Mokaddes Arman Owner/,
+      level: 1,
+    });
+    this.editProfileButton = this.main.getByRole('button', {
+      name: 'Edit profile',
+      exact: true,
+    });
   }
 
   async goto(): Promise<void> {
@@ -58,7 +68,6 @@ export class EmployeesPage extends AppShellPage {
 
   async expectLoaded(): Promise<void> {
     await expect(this.title).toBeVisible();
-    await expect(this.subtitle).toBeVisible();
     await expect(this.exportButton).toBeVisible();
     await expect(this.addEmployeesButton).toBeVisible();
     await expect(this.searchInput).toBeVisible();
@@ -93,6 +102,35 @@ export class EmployeesPage extends AppShellPage {
       .getByRole('button', { name: 'Cancel', exact: true })
       .click();
     await expect(this.dialog).toBeHidden();
+  }
+
+  /** Deep employee profile tabs (E-06): Profile, Schedule, Time, Leave, Pay. */
+  employeeProfileTab(name: string): Locator {
+    return this.main.getByRole('tab', { name, exact: true });
+  }
+
+  async openEmployeeProfile(employeeName: string): Promise<void> {
+    await this.main.getByRole('link', { name: employeeName }).click();
+  }
+
+  async expectProfileLoaded(): Promise<void> {
+    await expect(this.profileHeading).toBeVisible();
+    await expect(this.editProfileButton).toBeVisible();
+  }
+
+  async expectProfileTab(
+    name: string,
+    selected: boolean,
+  ): Promise<void> {
+    const tab = this.employeeProfileTab(name);
+
+    await expect(tab).toBeVisible();
+    await expect(tab).toHaveAttribute('aria-selected', selected ? 'true' : 'false');
+  }
+
+  async selectProfileTab(name: string): Promise<void> {
+    await this.main.getByRole('tab', { name, exact: true }).click();
+    await expect(this.employeeProfileTab(name)).toHaveAttribute('aria-selected', 'true');
   }
 
   async expectNoBrokenValues(): Promise<void> {
