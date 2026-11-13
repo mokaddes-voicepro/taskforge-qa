@@ -61,4 +61,41 @@ export class BasePage {
       })
       .toBe(0);
   }
+
+  /** Pins the viewport for responsive checks (NFR-03). */
+  async setViewportSize(width: number, height: number): Promise<void> {
+    await this.page.setViewportSize({ width, height });
+  }
+
+  async viewportSize(): Promise<{ width: number; height: number }> {
+    const size = this.page.viewportSize();
+
+    if (!size) {
+      throw new Error('The browser viewport is not set');
+    }
+
+    return { width: size.width, height: size.height };
+  }
+
+  /**
+   * True when the document is wider than the viewport, i.e. content overflows
+   * horizontally and would trigger a mobile sideways scroll (NFR-03).
+   */
+  async hasHorizontalOverflow(): Promise<boolean> {
+    const metrics = await this.page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+
+    return metrics.scrollWidth > metrics.clientWidth + 1;
+  }
+
+  async expectNoHorizontalOverflow(): Promise<void> {
+    await expect
+      .poll(() => this.hasHorizontalOverflow(), {
+        timeout: 15_000,
+        message: 'Expected no horizontal overflow at the current viewport',
+      })
+      .toBe(false);
+  }
 }

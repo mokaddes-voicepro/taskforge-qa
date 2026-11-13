@@ -173,6 +173,7 @@ account.
 | 15 | Departments | `tests/15-departments.spec.ts` | `pages/DepartmentsPage.ts` (extends `AppShellPage`) |
 | 16 | Employees | `tests/16-employees.spec.ts` | `pages/EmployeesPage.ts` (extends `AppShellPage`) |
 | 17 | Settings | `tests/17-settings.spec.ts` | `pages/SettingsPage.ts` (extends `AppShellPage`) |
+| — | Cross-cutting Security / Responsive / Realtime | `tests/11-security-edge-cases.spec.ts` | `pages/BasePage.ts` (viewport + overflow helpers) | SEC-01/05/06, GEN-07/08, NFR-03/08 |
 
 ### Module 1 — Home
 
@@ -331,6 +332,28 @@ Read-only checks: the settings shell with its section navigation, the general
 settings form (name, URL name, business type, timezone), disabled Save changes
 for unchanged values, and the danger-zone delete button. No setting is saved and
 the workspace is not deleted.
+
+### Cross-cutting — Security, Responsive & Edge Cases
+
+`tests/11-security-edge-cases.spec.ts` covers the scenarios that cut across
+module boundaries instead of belonging to a single module:
+
+- **SEC-01 / GEN-07** — unauthenticated deep links (workspace root, tasks, leave,
+  labor cost, settings, chat) redirect to the login page without rendering
+  workspace content.
+- **SEC-05** — script/HTML injection payloads (`<script>`, `<img onerror>`) in the
+  Tasks search and the unsubmitted New-announcement form stay inert; no dialog is
+  opened and no page error is raised.
+- **SEC-06** — the Labor cost CSV export control targets the export endpoint and is
+  not a script/data URL; spreadsheet formula prefixes (`=1+1`, `=cmd|…`, `@SUM(1)`,
+  `+1`, `-1`) stay inert in the Tasks search.
+- **NFR-08** — with the realtime host (`api.mytaskforge.net`) unreachable, the status
+  strip reports the reconnecting/paused transport and no unhandled page error occurs.
+- **NFR-03 / GEN-08** — responsive checks at 375px (no horizontal overflow, shell
+  controls keep a 44px tap target) and 1440px (no horizontal overflow on core pages).
+
+The spec never submits or mutates data: dialogs are cancelled, searches are
+cleared and exports are inspected only.
 
 ## Known constraints handled by the helpers
 
